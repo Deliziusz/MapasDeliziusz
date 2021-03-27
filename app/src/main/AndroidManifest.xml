@@ -11,7 +11,9 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    <!--
+      Karla Yazmín García Pérez
+   -->
 
     <application
         android:allowBackup="true"
@@ -39,13 +41,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBHtYD_i3eqYqdCroUTQDwzb5FtqD323oc" />
-
         <activity
             android:name=".MapsActivity"
             android:label="Map">
-
         </activity>
-
     </application>
-
 </manifest>

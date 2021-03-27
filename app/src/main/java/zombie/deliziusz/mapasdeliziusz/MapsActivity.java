@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+    //Creamos un objeto de la clase GoogleMap
     private GoogleMap mMap;
 
     @Override
@@ -38,6 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        //Inicializa los mapas
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -61,13 +62,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lo = Variables.longitud;
         la = Variables.latitud;
         Log.e("campos", lo + ", " +la);
-        //LatLng origen = new LatLng(20.081426,-101.128522v);
         LatLng origen = new LatLng(la,lo);
         LatLng destino = new LatLng(20.141568,-101.174313);
         //LatLng destino = new LatLng(20.139695,-101.150705);
-        // Add a marker in Sydney and move the camera
 
-        mMap.addMarker(new MarkerOptions().position(origen).title("Mi cashita Acámbaro"));
+        mMap.addMarker(new MarkerOptions().position(origen).title("Aquí tas"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(origen));
         mMap.addMarker(new MarkerOptions().position(destino).title("Mi cashita Uriangato"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(destino));
@@ -77,64 +76,71 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         downloadTask.execute(url);
     }
     private String obtenerDireccionesURL(LatLng origin,LatLng dest){
-
+        //Se crea una variable de origen para obtener la direccion con ayuda de google maps
+        //y claro de la api que implementamos en las dependencias
         String str_origin = "origin="+origin.latitude+","+origin.longitude;
-
+        //Se crea una variable de destino para obtener la direccion con ayuda de google maps
         String str_dest = "destination="+dest.latitude+","+dest.longitude;
-
-        //  String sensor = "sensor=false";
-
+        //Creación de una variable que sea la encargada de almacenar las dos anteriores
+        //llamada parametros
         String parameters = str_origin+"&"+str_dest+"&";
-
+        //creamos una variable llamada salida que sera el json
         String output = "json";
-
+        //especificamos una URL para las direcciones en el maps por medio de la api
+        // dando la APIKEY dada en clase por el docente
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"
                 +parameters+"&key=AIzaSyBHtYD_i3eqYqdCroUTQDwzb5FtqD323oc";
         Log.e("laurl", url);
-
+        //lanzamos el resultado de la consulta a las direcciones
         return url;
     }
     private class DownloadTask extends AsyncTask<String, Void, String> {
-
+//Heredamos un método abstracto en donde vamos a pasar el url para que se pueda
+        //realizar la consulta
         @Override
         protected String doInBackground(String... url) {
-
+        //creamos variable para almacenar el resultado de la consulta
             String data = "";
-
             try{
+                //descarga el URL para poder ser enviado y usar su info cosultada
                 data = downloadUrl(url[0]);
             }catch(Exception e){
+                //caso contrario, lanzamos un mensajito que fallo algo
                 Log.d("ERROR AL OBTENER INFO",e.toString());
             }
+            //regresamos dato
             return data;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
             ParserTask parserTask = new ParserTask();
-
             parserTask.execute(result);
+            //aqui le pasamos una variable resultado que es la encargada de
+            //termiar el proceso de la clase parsertask
         }
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
-
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
+//creamos un objeto de la clase JSONObject
             JSONObject jObject;
+            //para crear una lista de los puntos que se hizo en la consulta de arriba
             List<List<HashMap<String, String>>> routes = null;
 
             try{
+                //buscamos en la consulta de JSON
                 jObject = new JSONObject(jsonData[0]);
+                //buscamos las direciones de tipo json y almacenamos
                 DirectionsJSONParser parser = new DirectionsJSONParser();
-
+                //se las pasamos a routes el objeto de tipo json
                 routes = parser.parse(jObject);
             }catch(Exception e){
                 e.printStackTrace();
             }
+            //lanzamos los datos de la ruta
             return routes;
         }
 
